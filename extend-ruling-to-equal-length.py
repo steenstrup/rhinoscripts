@@ -7,7 +7,7 @@ import Rhino.Geometry.Point3f as Point3f
 
 surface = rs.GetObject("surface",filter=8)
 
-def extend(surface):
+def extend(surface, mm_len):
 
     u0, u1 = rs.SurfaceDomain(surface, 0)
     v0, v1 = rs.SurfaceDomain(surface, 1)
@@ -25,15 +25,12 @@ def extend(surface):
             c = rs.ExtractIsoCurve(surface, (u0, v0 + dv*v), 0)
             if c == []:
                 continue
-            L = (400 - rs.CurveLength(c))/2.0
-            
+            L = (mm_len - rs.CurveLength(c))/2.0
             c0 = rs.ExtendCurveLength(c[0], 0, 0, L)
             
-            #c0 = rs.ExtendCurve(c[0],0,0,tmp)
             if c0 is None: 
                 continue
             c1 = rs.ExtendCurveLength(c0, 0, 1, L)
-            #c1 = rs.ExtendCurve(c0,0,1,tmp)
             if c1 is None:
                 continue
             points0.append(rs.CurveEndPoint(c1))
@@ -48,4 +45,4 @@ def extend(surface):
         rs.DeleteObject(c1)
     
 
-extend(surface)
+extend(surface, 400)
